@@ -1,67 +1,90 @@
-import { Link } from 'react-router-dom';
-import { useContext } from 'react';
-import { AuthContext } from '../providers/AuthProvider';
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../providers/AuthProvider";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
+import { toast } from "sonner";
+
+const formSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 const SignUp = () => {
+  const { createUser } = useContext(AuthContext);
 
-    const { createUser } = useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(formSchema),
+  });
 
-    const handleSignUp = event => {
-        event.preventDefault();
-        const form = event.target;
-        const name = form.name.value;
-        const email = form.email.value;
-        const password = form.password.value;
-        //console.log(name, email, password)
+  const onSubmit = (data) => {
+    const { name, email, password } = data;
 
+    createUser(email, password)
+      .then((result) => {
+        toast.success(`Welcome, ${name}!`, {
+          description: "Account created successfully.",
+        });
 
-        createUser(email, password)
-            .then(result => {
-                const user = result.user;
-                //console.log('created user', user)
-            })
-            // .catch(error => console.log(error))
+      })
+      .catch((error) => {
+        toast.error("Signup failed", {
+          description: error.message || "Something went wrong.",
+        });
+      });
+  };
 
-    }
-
-    return (
-        <div className="hero min-h-screen bg-base-200">
-            <div className="hero-content flex-col lg:flex-row">
-                <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-                    <div className="card-body">
-                        <h1 className="text-3xl text-center font-bold">Sign Up</h1>
-                        <form onSubmit={handleSignUp}>
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text">Name</span>
-                                </label>
-                                <input type="text" name='name' placeholder="name" className="input input-bordered" />
-                            </div>
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text">Email</span>
-                                </label>
-                                <input type="text" name='email' placeholder="email" className="input input-bordered" />
-                            </div>
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text">Confirm Password</span>
-                                </label>
-                                <input type="password" name='password' placeholder="password" className="input input-bordered" />
-                                <label className="label">
-                                    <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-                                </label>
-                            </div>
-                            <div className="form-control mt-6">
-                                <input className="btn btn-primary" type="submit" value="Sign Up" />
-                            </div>
-                        </form>
-                        <p className='my-4 text-center'>Already Have an Account? <Link className='text-orange-600 font-bold' to="/login">Login</Link> </p>
-                    </div>
-                </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-muted px-4">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl">Sign Up</CardTitle>
+        </CardHeader>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <CardContent className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" {...register("name")} />
+              {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
             </div>
-        </div>
-    );
+            <div className="space-y-1">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" {...register("email")} />
+              {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" {...register("password")} />
+              {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4 mt-4">
+            <Button type="submit" className="w-full">
+              Sign Up
+            </Button>
+            <p className="text-center text-sm">
+              Already have an account?{" "}
+              <Link to="/login" className="text-orange-600 font-semibold hover:underline">
+                Login
+              </Link>
+            </p>
+          </CardFooter>
+        </form>
+      </Card>
+    </div>
+  );
 };
 
 export default SignUp;

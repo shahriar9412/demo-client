@@ -8,8 +8,8 @@ const Home = () => {
   const [products, setProducts] = useState(loadedProducts);
 
   return (
-    <div className='m-20 bg-sky-200 rounded-lg px-8 pb-8'>
-      <h1 className='text-4xl text-center py-8 text-purple-600 italic'>Total Products: {products.length}</h1>
+    <div className='m-20'>
+      
       <div className='grid md:grid-cols-3 gap-4'>
         {
           products.map(product => <ProductCard
