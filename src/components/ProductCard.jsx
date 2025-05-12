@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
 
             <CardContent className="space-y-2 p-4">
                 <h2 className="text-2xl font-semibold text-sky-600">{name}</h2>
-                <p className="text-lg font-medium text-black-900">Price: ${price}</p>
+                <p className="text-lg font-medium text-black-900">Price: ৳{price}</p>
             </CardContent>
 
             <CardFooter className="flex justify-end px-4 pb-4">
