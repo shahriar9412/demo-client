@@ -54,7 +54,7 @@ const Navbar = () => {
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="w-64 pt-10">
-                        <nav className="space-y-4 text-lg font-medium text-gray-700">
+                        <nav className=" flex flex-col space-y-4 pl-28 pr-4 text-lg font-medium text-gray-700">
                             <Link to="/" onClick={() => setOpen(false)}>Home</Link>
                             <Link to="/addProduct" onClick={() => setOpen(false)}>Add Product</Link>
                             {user?.email ? (
